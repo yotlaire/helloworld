@@ -1,0 +1,40 @@
+name: Deploy to AWS S3
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js 16
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+
+    - name: Install dependencies (frontend)
+      working-directory: client
+      run: npm install
+
+    - name: Build React app
+      working-directory: client
+      run: npm run build  # Assuming you have a build script for production
+
+    - name: Install dependencies (backend)  # Optional if you have backend dependencies
+      run: npm install  # Adjust if your backend build script is different
+
+    - name: Build backend  # Optional if you have a separate backend build script
+      run: npm run build:backend  # Adjust the command as needed
+
+    - name: Deploy to S3
+      uses: aws-actions/aws-s3-deploy@v1
+      with:
+        name: your-bucket-name  # Replace with your S3 bucket name
+        region: ${{ secrets.AWS_REGION }}
+        access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        local_base: client/build  # Path to your built React app
+        path:  # Optional path within the S3 bucket (e.g., 'hello-world')
