@@ -2,7 +2,7 @@ name: Deploy to AWS S3
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -16,11 +16,11 @@ jobs:
         node-version: 16
 
     - name: Install dependencies (frontend)
-      working-directory: client
+      working-directory: app  # Update the directory name
       run: npm install
 
     - name: Build React app
-      working-directory: client
+      working-directory: app  # Update the directory name
       run: npm run build  # Assuming you have a build script for production
 
     - name: Install dependencies (backend)  # Optional if you have backend dependencies
@@ -32,9 +32,9 @@ jobs:
     - name: Deploy to S3
       uses: aws-actions/aws-s3-deploy@v1
       with:
-        name: your-bucket-name  # Replace with your S3 bucket name
-        region: ${{ secrets.AWS_REGION }}
+        name: reacts3buck  # Replace with your specific bucket name
+        region: us-east-1  # The region where your S3 bucket resides
         access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        local_base: client/build  # Path to your built React app
+        local_base: app/build  # Update the path to the built React app
         path:  # Optional path within the S3 bucket (e.g., 'hello-world')
