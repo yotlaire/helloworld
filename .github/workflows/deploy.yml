@@ -17,17 +17,12 @@ jobs:
         node-version: 16
 
     - name: Install dependencies (frontend)
-      working-directory: app
       run: npm install
 
     - name: Build React app (Debug)
-      working-directory: app
       run: npm run build
       env:
         DEBUG: true
-
-    - name: List build directory contents (Debug)
-      run: ls -la build/
 
     - name: Upload to S3 with Private Access
       uses: jakejarvis/s3-sync-action@master
