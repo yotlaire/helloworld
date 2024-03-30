@@ -19,9 +19,15 @@ jobs:
       working-directory: app  # Update the directory name if needed
       run: npm install
 
-    - name: Build React app
+    - name: Build React app (Debug)
       working-directory: app  # Update the directory name if needed
       run: npm run build  # Assuming you have a build script for production
+      env:
+        DEBUG=true  # Add this line to print detailed build logs
+
+    - name: List build directory contents (Debug)
+      run: ls -la build/  # This will list files in the build directory
+      # This step helps verify the build script generates the expected output
 
     - name: Install dependencies (backend)  # Optional if you have backend dependencies
       run: npm install  # Adjust if your backend build script is different
@@ -32,9 +38,10 @@ jobs:
     - name: Upload to S3 with Private Access
       uses: jakejarvis/s3-sync-action@master
       with:
-        args: --delete  # Optional: Delete extra files in S3 (adjust with caution)
+        # Optional: Comment out this line if you don't want to delete extra files
+        # args: --delete
         env:
-          SOURCE_DIR: app/build  # Update the directory with your built app (likely 'build/')
+          SOURCE_DIR: build/  # Update the directory with your built app (likely 'build/')
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
