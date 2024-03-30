@@ -29,12 +29,12 @@ jobs:
     - name: Build backend  # Optional if you have a separate backend build script
       run: npm run build:backend  # Adjust the command as needed
 
-    - name: Use aws-actions/aws-s3-deploy
-      uses: aws-actions/aws-s3-deploy@v1
-      with:
-        name: reacts3buck  # Replace with your specific bucket name
-        region: us-east-1  # The region where your S3 bucket resides
-        access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        local_base: app/build  # Update the path to the built React app
-        path:  # Optional path within the S3 bucket (e.g., 'hello-world')
+    - name: Upload to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read
+        env:
+          SOURCE_DIR: build/
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
