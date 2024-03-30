@@ -2,7 +2,7 @@ name: Deploy to AWS S3
 
 on:
   push:
-    branches: [ main ] # Adjust this to your deployment branch
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -17,30 +17,24 @@ jobs:
         node-version: 16
 
     - name: Install dependencies (frontend)
-      working-directory: app # Update the directory name if needed
+      working-directory: app
       run: npm install
 
     - name: Build React app (Debug)
-      working-directory: app # Update the directory name if needed
-      run: npm run build # Assuming you have a build script for production
+      working-directory: app
+      run: npm run build
       env:
-        DEBUG: true # Add this line to print detailed build logs
+        DEBUG: true
 
     - name: List build directory contents (Debug)
-      run: ls -la build/ # This will list files in the build directory
-      # This step helps verify the build script generates the expected output
-
-    # - name: Install dependencies (backend) # Optional if you have backend dependencies
-    #   run: npm install # Adjust if your backend build script is different
-
-    # - name: Build backend # Optional if you have a separate backend build script
-    #   run: npm run build:backend # Adjust the command as needed
+      run: ls -la build/
 
     - name: Upload to S3 with Private Access
       uses: jakejarvis/s3-sync-action@master
       with:
-        env:
-          SOURCE_DIR: build/ # Update the directory with your built app (likely 'build/')
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        args: --delete
+      env:
+        SOURCE_DIR: build/
+        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
