@@ -21,7 +21,10 @@ jobs:
 
     - name: Run Node.js application
       run: node server.js & echo "Node.js application started in the background."
-
+   
+    - name: Build application
+      run: npm run build
+  
     - name: Upload to S3 with Private Access
       uses: jakejarvis/s3-sync-action@master
       with:
